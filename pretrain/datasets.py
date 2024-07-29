@@ -13,6 +13,8 @@ from PIL import Image
 import numpy as np
 import torchvision
 from pdb import set_trace as pb
+import torch
+import random
 
 class INatDataset(ImageFolder):
     def __init__(self, root, train=True, year=2018, transform=None, target_transform=None,

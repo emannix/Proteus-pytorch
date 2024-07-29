@@ -35,6 +35,7 @@ from timm.data import Mixup
 from timm.utils import accuracy, ModelEma
 import utils
 
+from pdb import set_trace as pb
 
 class MaskingGenerator(ABC):
     def __init__(self, input_size):
@@ -293,7 +294,12 @@ def main(args):
                 dataset_train, num_replicas=num_tasks, rank=global_rank, shuffle=True
             )
     else:
-        sampler_train = torch.utils.data.RandomSampler(dataset_train)
+        if args.repeated_aug:
+            sampler_train = RASampler(
+                dataset_train, num_replicas=1, rank=0, shuffle=True
+            )
+        else:
+            sampler_train = torch.utils.data.RandomSampler(dataset_train)
         
     n_tokens = (args.global_crops_size // args.patch_size) ** 2
     mask_generator = RandomMaskingGenerator(
@@ -414,7 +420,7 @@ def main(args):
     start_time = time.time()
     max_accuracy = 0.0
     for epoch in range(args.start_epoch, args.epochs):
-        if args.distributed:
+        if args.distributed or args.repeated_aug:
             data_loader_train.sampler.set_epoch(epoch)
         
         train_stats = train_one_epoch(
