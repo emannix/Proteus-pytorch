@@ -56,7 +56,6 @@ class RASampler(torch.utils.data.Sampler):
         indices = indices[self.rank:self.total_size:self.num_replicas]
         assert len(indices) == self.num_samples
 
-        pb()
         return iter(indices[:self.num_selected_samples])
 
     def __len__(self):
