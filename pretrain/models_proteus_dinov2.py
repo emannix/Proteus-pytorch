@@ -169,7 +169,7 @@ class MetaArch(nn.Module):
         # compute the total loss
         total_loss = patch_loss + fea_loss + token_loss
 
-        pb()
+        # pb()
         # return the final loss dict
         loss_dict = {"patch_loss": patch_loss, "fea_loss": fea_loss, "token_loss": token_loss, "loss": total_loss}
         
