@@ -19,6 +19,7 @@ import torch
 
 logger = logging.getLogger("dinov2")
 
+from pdb import set_trace as pb
 
 
 def collate_data_and_cast_aug(
@@ -32,7 +33,6 @@ def collate_data_and_cast_aug(
     clone_batch=1,
 ):
     # dtype = torch.half  # TODO: Remove
-
     n_global_crops = 1
 
     assert n_global_crops > 0, "global crops number should be > 0"
