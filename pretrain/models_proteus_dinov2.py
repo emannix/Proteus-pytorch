@@ -21,6 +21,8 @@ from torch.nn.init import trunc_normal_
 from torch.nn.utils import weight_norm
 import models_dinov2
 
+from pdb import set_trace as pb
+
 
 class MetaArch(nn.Module):
 
@@ -167,6 +169,7 @@ class MetaArch(nn.Module):
         # compute the total loss
         total_loss = patch_loss + fea_loss + token_loss
 
+        pb()
         # return the final loss dict
         loss_dict = {"patch_loss": patch_loss, "fea_loss": fea_loss, "token_loss": token_loss, "loss": total_loss}
         

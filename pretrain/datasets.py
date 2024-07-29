@@ -10,6 +10,9 @@ from timm.data.constants import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD
 from timm.data import create_transform
 from PIL import Image
 
+import numpy as np
+import torchvision
+from pdb import set_trace as pb
 
 class INatDataset(ImageFolder):
     def __init__(self, root, train=True, year=2018, transform=None, target_transform=None,
@@ -75,9 +78,18 @@ def build_dataset(is_train, args):
 
     return dataset, nb_classes
 
+class SetSeedTransform(torch.nn.Module):
+    def forward(self, img): 
+        seed = 0
+        random.seed(seed)
+        torch.manual_seed(seed)
+        np.random.seed(seed)
+        return img
 
 def build_transform(is_train, args):
     resize_im = args.input_size > 32
+    args.augmentations_fix_seed = True
+
     if is_train:
         # this should always dispatch to transforms_imagenet_train
         transform = create_transform(
@@ -95,9 +107,16 @@ def build_transform(is_train, args):
             # RandomCrop
             transform.transforms[0] = transforms.RandomCrop(
                 args.input_size, padding=4)
+        if args.augmentations_fix_seed:
+            transform.transforms.insert(0, SetSeedTransform())
+        # noise_3d = torchvision.transforms.functional.to_pil_image(torch.randn(3, 224, 224))
+        # transform(noise_3d)
         return transform
 
-    t = []
+    if args.augmentations_fix_seed:
+        t = [SetSeedTransform()]
+    else:
+        t = []
     if resize_im:
         size = int(args.input_size / args.eval_crop_ratio)
         t.append(
@@ -107,4 +126,7 @@ def build_transform(is_train, args):
 
     t.append(transforms.ToTensor())
     t.append(transforms.Normalize(IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD))
-    return transforms.Compose(t)
+    t = transforms.Compose(t)
+    # noise_3d = torch.randn(3, 224, 224)
+    # pb()
+    return t

@@ -56,6 +56,15 @@ python main.py \
     --lambda_token 1.0 --lambda_fea 1.0 --lambda_patch 1.0 \
     --output_dir log/DINOv2_training;
 
+# for testing
+
+python main.py \
+    --batch-size 4 --warmup-epochs 5 --epochs 300 \
+    --data-set CIFAR --data-path imagenet_path \
+    --teacher-model vit_small --target_model vit_tiny --model models_proteus_dinov2 \
+    --patch_size 14 --mask_probability 0.5 --mask_ratio 0.5 --mask_first_n \
+    --lambda_token 1.0 --lambda_fea 1.0 --lambda_patch 1.0 \
+    --output_dir log/DINOv2_training;
 
 
 ##Log this job's resource usage stats###
